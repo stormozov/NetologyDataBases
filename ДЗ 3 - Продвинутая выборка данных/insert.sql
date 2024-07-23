@@ -1,5 +1,6 @@
 -- 1. Заполнение таблицы исполнителей (artists)
-INSERT INTO artists (artist_id, name) VALUES 
+INSERT INTO artists (artist_id, name)
+VALUES 
 (1, 'Eminem'),
 (2, 'MoonByul'),
 (3, 'Yezi'),
@@ -7,7 +8,8 @@ INSERT INTO artists (artist_id, name) VALUES
 (5, 'Мари Краймбрери');
 
 -- 2. Заполнение таблицы жанров (genres)
-INSERT INTO genres (genre_id, name) VALUES 
+INSERT INTO genres (genre_id, name)
+VALUES 
 (1, 'Hip hop'),
 (2, 'Pop'),
 (5, 'K-pop'),
@@ -57,7 +59,7 @@ VALUES
 -- Albums released in 2023
 INSERT INTO albums (album_id, title, release_year)
 VALUES 
-(13, 'YOUNHA Studio Live Album \'MINDSET\'', 2023);
+(13, 'YOUNHA Studio Live Album \''MINDSET\''', 2023);
 
 -- 4. Заполнение таблицы треков (tracks)
 -- Album 1
@@ -69,7 +71,7 @@ VALUES
 -- Album 2
 INSERT INTO tracks (track_id, title, duration, album_id)
 VALUES 
-(1, 'You Don’t Know', 257, 2);
+(1, 'You Don`t Know', 257, 2);
 
 -- Album 3
 INSERT INTO tracks (track_id, title, duration, album_id)
@@ -151,75 +153,89 @@ VALUES (4, 'Female Power', 2022);
 
 -- 6. Таблица "многие ко многим". Связь между таблицами артистов и жанров
 -- Artist 1
-INSERT INTO artist_genres (artist_id, genre_id) VALUES 
+INSERT INTO artist_genres (artist_id, genre_id)
+VALUES 
 (1, 1),
 (1, 4);
 
 -- Artist 2
-INSERT INTO artist_genres (artist_id, genre_id) VALUES 
+INSERT INTO artist_genres (artist_id, genre_id)
+VALUES 
 (2, 5);
 
 -- Artist 3
-INSERT INTO artist_genres (artist_id, genre_id) VALUES 
+INSERT INTO artist_genres (artist_id, genre_id)
+VALUES 
 (3, 5);
 
 -- Artist 4
-INSERT INTO artist_genres (artist_id, genre_id) VALUES 
+INSERT INTO artist_genres (artist_id, genre_id)
+VALUES 
 (4, 5);
 
 -- Artist 5
-INSERT INTO artist_genres (artist_id, genre_id) VALUES 
+INSERT INTO artist_genres (artist_id, genre_id)
+VALUES 
 (5, 2);
 
 -- 7. Таблица "многие ко многим". Связь между таблицами альбомами и артистами
 -- Artist 1
-INSERT INTO album_artists (album_id, artist_id) VALUES 
+INSERT INTO album_artists (album_id, artist_id)
+VALUES 
 (1, 1),
 (2, 1),
 (8, 1),
 (9, 1);
 
 -- Artist 2
-INSERT INTO album_artists (album_id, artist_id) VALUES 
+INSERT INTO album_artists (album_id, artist_id)
+VALUES 
 (5, 2),
 (10, 2),
 (11, 2);
 
 -- Artist 3
-INSERT INTO album_artists (album_id, artist_id) VALUES 
+INSERT INTO album_artists (album_id, artist_id)
+VALUES 
 (7, 3),
 (12, 3);
 
 -- Artist 4
-INSERT INTO album_artists (album_id, artist_id) VALUES 
+INSERT INTO album_artists (album_id, artist_id)
+VALUES 
 (6, 4);
 
 -- Artist 5
-INSERT INTO album_artists (album_id, artist_id) VALUES 
+INSERT INTO album_artists (album_id, artist_id)
+VALUES 
 (3, 5),
 (4, 5);
 
 -- 8. Таблица "многие ко многим". Связь между таблицами коллекций и треками
 -- Collection 1
-INSERT INTO collection_tracks (collection_id, track_id) VALUES 
+INSERT INTO collection_tracks (collection_id, track_id)
+VALUES 
 (1, 8),
 (1, 10),
 (1, 6);
 
 -- Collection 2
-INSERT INTO collection_tracks (collection_id, track_id) VALUES 
+INSERT INTO collection_tracks (collection_id, track_id)
+VALUES 
 (2, 4),
 (2, 14),
 (2, 12);
 
 -- Collection 3
-INSERT INTO collection_tracks (collection_id, track_id) VALUES 
+INSERT INTO collection_tracks (collection_id, track_id)
+VALUES 
 (3, 9),
 (3, 3),
 (3, 12);
 
 -- Collection 4
-INSERT INTO collection_tracks (collection_id, track_id) VALUES 
+INSERT INTO collection_tracks (collection_id, track_id)
+VALUES 
 (4, 6),
 (4, 5),
 (4, 15),

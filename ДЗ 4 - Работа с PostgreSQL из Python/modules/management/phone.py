@@ -1,3 +1,6 @@
+from ..validate import validate_client_id, validate_phones
+
+
 def add_phone(conn, client_id: int, phone: str) -> None:
     """
         Adds a new phone number to the phones table in the database.
@@ -14,14 +17,8 @@ def add_phone(conn, client_id: int, phone: str) -> None:
             TypeError: If client_id is not an integer or phone is not a string.
             ValueError: If client_id is None or phone is an empty string.
     """
-    if not isinstance(client_id, int):
-        raise TypeError('client_id must be an integer')
-    if not isinstance(phone, str):
-        raise TypeError('phone should be a string')
-    if not phone.strip():
-        raise ValueError("phone can't be empty")
-    if client_id is None:
-        raise ValueError('client_id cannot be None')
+    validate_client_id(client_id)
+    validate_phones(phone)
 
     phone = add_plus_to_phone(phone)
 
@@ -57,12 +54,8 @@ def del_phone(conn, client_id: int, phone: str) -> None:
             TypeError: If client_id is not an integer or phone is not a string.
             ValueError: If either client_id or phone is None or empty.
     """
-    if not isinstance(client_id, int):
-        raise TypeError('client_id must be an integer')
-    if not isinstance(phone, str):
-        raise TypeError('phone must be a string')
-    if not client_id or not phone.strip():
-        raise ValueError('Client ID and phone number must be provided and not empty')
+    validate_client_id(client_id)
+    validate_phones(phone)
 
     phone = add_plus_to_phone(phone)
     phone_id = get_phone_id(conn, client_id, phone)
@@ -90,8 +83,6 @@ def get_phone_id(conn, client_id: int, phone: str) -> int | None:
         Raises:
             ValueError: If either client_id or phone is None.
     """
-    if not client_id or not phone:
-        raise ValueError('Client ID and phone number must be provided')
 
     with conn.cursor() as cur:
         cur.execute('SELECT id FROM phones WHERE client_id = %s AND phone = %s', (client_id, phone))

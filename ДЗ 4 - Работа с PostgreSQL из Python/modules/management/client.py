@@ -1,4 +1,5 @@
 from .phone import add_phone, add_plus_to_phone
+from ..validate import validate_client_info, validate_client_id
 
 
 def add_client(conn, name: str, surname: str, email: str, phone=None) -> int:
@@ -19,20 +20,7 @@ def add_client(conn, name: str, surname: str, email: str, phone=None) -> int:
 			TypeError: If the name, surname, or email data type is not str.
 			ValueError: If name, surname or email is blank or None.
 	"""
-	if not isinstance(name, str):
-		raise TypeError('name must be a string')
-	if not isinstance(surname, str):
-		raise TypeError('surname should be a string')
-	if not isinstance(email, str):
-		raise TypeError('email should be a string')
-	if not name.strip():
-		raise ValueError('name cannot be empty')
-	if not surname.strip():
-		raise ValueError('surname cannot be empty')
-	if not email.strip():
-		raise ValueError('email cannot be empty')
-	if phone is not None and not isinstance(phone, str):
-		raise TypeError('phone must be a string or None')
+	validate_client_info(name, surname, email, [phone])
 
 	with conn.cursor() as cur:
 		cur.execute(
@@ -70,8 +58,7 @@ def del_client(conn, client_id: int) -> None:
 			TypeError: If client_id is not an integer.
 			ValueError: If client_id does not exist in the database.
 	"""
-	if not isinstance(client_id, int):
-		raise TypeError('Client ID must be an integer')
+	validate_client_id(client_id)
 
 	with conn.cursor() as cur:
 		cur.execute('SELECT id FROM clients WHERE id = %s', (client_id,))
@@ -83,57 +70,6 @@ def del_client(conn, client_id: int) -> None:
 		cur.execute('DELETE FROM clients WHERE id = %s', (client_id,))
 		conn.commit()
 		print(f'The client with the identifier {client_id} has been permanently deleted!', end='\n\n')
-
-
-def change_client_info(
-		conn, client_id, name=None,
-		surname=None, email=None, phones=None
-) -> None:
-	"""
-		Updates a client record in the database with the given client_id
-		and any of the optional parameters that are not None.
-
-		Args:
-			conn (psycopg2.extensions.connection): The database connection.
-			client_id (int): The ID of the client to update.
-			name (str): The new name for the client.
-			surname (str): The new surname for the client.
-			email (str): The new email for the client.
-			phones (list): A list of phone numbers to replace the existing ones.
-
-		Returns:
-			None
-	"""
-	with conn.cursor() as cur:
-		updates, values = [], []
-
-		if name is not None:
-			updates.append('name = %s')
-			values.append(name)
-		if surname is not None:
-			updates.append('surname = %s')
-			values.append(surname)
-		if email is not None:
-			updates.append('email = %s')
-			values.append(email)
-
-		if updates:
-			query = 'UPDATE clients SET ' + ', '.join(updates) + ' WHERE id = %s'
-			values.append(client_id)
-			cur.execute(query, values)
-
-		if phones:
-			phones = [add_plus_to_phone(phone) for phone in phones]
-			# Delete existing phones
-			cur.execute('DELETE FROM phones WHERE client_id = %s', (client_id,))
-			# Add new phones
-			cur.executemany(
-				'INSERT INTO phones (client_id, phone) VALUES (%s, %s)',
-				[(client_id, phone) for phone in phones]
-			)
-
-		conn.commit()
-		print(f"The client's data with ID {client_id} has been successfully updated!", end='\n\n')
 
 
 def find_client(
@@ -158,17 +94,7 @@ def find_client(
 			TypeError: If name, surname, email, or phone are not strings or None.
 			ValueError: If all search criteria (name, surname, email, phone) are None.
 	"""
-	if name is not None and not isinstance(name, str):
-		raise TypeError('name must be a string or Non')
-	if surname is not None and not isinstance(surname, str):
-		raise TypeError('surname must be a string or None')
-	if email is not None and not isinstance(email, str):
-		raise TypeError('email must be a string or None')
-	if phone is not None and not isinstance(phone, str):
-		raise TypeError('phone must be a string or None')
-
-	if all(arg is None for arg in [name, surname, email, phone]):
-		raise ValueError('At least one search criterion must be provided')
+	validate_client_info(name, surname, email, phone)
 
 	with conn.cursor() as cur:
 		query = """
@@ -180,10 +106,11 @@ def find_client(
 		"""
 		params = [name, name, surname, surname, email, email, phone, phone]
 		cur.execute(query, params)
+
 		if cur.rowcount != 0:
 			client_ids = [row[0] for row in cur.fetchall()]
 			print(f'The unique identifiers of the identified clients: {client_ids}', end='\n\n')
 			return client_ids
 		else:
-			return 'Warning: The search for the specified criteria was unsuccessful'
+			print('Warning: The search for the specified criteria was unsuccessful', end='\n\n')
 

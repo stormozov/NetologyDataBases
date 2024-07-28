@@ -3,8 +3,8 @@ from ..validate import validate_client_info, validate_client_id
 
 
 def update_client_info(
-		conn, client_id, name=None,
-		surname=None, email=None, phones=None
+		conn, client_id: int, name: str = None,
+		surname: str = None, email: str = None, phones: list[str] | str = None
 ) -> None:
 	"""
 		Updates the information of a client in the database.
@@ -15,7 +15,7 @@ def update_client_info(
 			name (str, optional): The new name of the client. Defaults to None.
 			surname (str, optional): The new surname of the client. Defaults to None.
 			email (str, optional): The new email of the client. Defaults to None.
-			phones (list[str], optional): The new phone numbers of the client. Defaults to None.
+			phones (list[str] or str, optional): The new phone numbers of the client. Defaults to None.
 
 		Returns:
 			None
@@ -31,10 +31,11 @@ def update_client_info(
 	if phones:
 		update_client_phones(conn, client_id, phones)
 
-	commit_changes_and_print_message(conn, client_id)
+	conn.commit()
+	print(f"The client's data with ID {client_id} has been successfully updated!", end='\n\n')
 
 
-def build_update_query(updates):
+def build_update_query(updates: list) -> str:
 	"""
 	Builds the UPDATE query string.
 
@@ -47,7 +48,7 @@ def build_update_query(updates):
 	return f'UPDATE clients SET {", ".join(updates)} WHERE id = %s'
 
 
-def build_update_params(name=None, surname=None, email=None):
+def build_update_params(name: str = None, surname: str = None, email: str = None) -> tuple:
 	"""
 	Builds the update parameters and values.
 
@@ -70,7 +71,10 @@ def build_update_params(name=None, surname=None, email=None):
 	return updates, values
 
 
-def change_client_info(conn, client_id, name=None, surname=None, email=None) -> None:
+def change_client_info(
+		conn, client_id: int, name: str = None,
+		surname: str = None, email: str = None
+) -> None:
 	"""
 	Updates the information of a client in the database.
 
@@ -123,23 +127,4 @@ def update_client_phones(conn, client_id: int, phones: list[str] | str) -> None:
 			'INSERT INTO phones (client_id, phone) VALUES (%s, %s)',
 			[(client_id, phone) for phone in phones]
 		)
-
-
-def commit_changes_and_print_message(conn, client_id) -> None:
-	"""
-		Commits the changes to the database and prints a success message.
-
-		Args:
-			conn (psycopg2.extensions.connection): The database connection object.
-			client_id (int): The ID of the client whose data was updated.
-
-		Returns:
-			None
-
-		Notes:
-			This function commits the changes made to the database and prints a success message
-			indicating that the client's data has been successfully updated.
-	"""
-	conn.commit()
-	print(f"The client's data with ID {client_id} has been successfully updated!", end='\n\n')
 

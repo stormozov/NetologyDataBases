@@ -102,3 +102,33 @@ def add_plus_to_phone(phone: str) -> str:
     """
     return "+" + phone if not phone.startswith("+") else phone
 
+
+def show_client_phone(conn, client_id: int) -> None:
+    """
+    Displays the phone number of the client with the given ID.
+
+    Args:
+        conn (psycopg2.extensions.connection): The database connection object.
+        client_id (int): The ID of the client whose phone number to display.
+
+    Returns:
+        None
+
+    Raises:
+        TypeError: If client_id is not an integer.
+        ValueError: If client_id is None or 0.
+    """
+    validate_client_id(client_id)
+
+    with conn.cursor() as cur:
+        cur.execute('SELECT phone FROM phones WHERE client_id = %s', (client_id,))
+        result = cur.fetchall()
+
+        if result:
+            print(
+                f"Phone number of the client with ID {client_id}: \n - {"\n - ".join(phone[0] for phone in result)}",
+                end='\n\n'
+            )
+        else:
+            print(f"Client with ID {client_id} has no phone number.", end='\n\n')
+

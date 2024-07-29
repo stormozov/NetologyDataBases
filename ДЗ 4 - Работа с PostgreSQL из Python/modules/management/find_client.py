@@ -6,12 +6,17 @@ def build_query(name: str, surname: str, email: str, phone: str) -> tuple:
 	"""Forming a database query for finding clients by name, surname, email, and phone number."""
 	query = """
 		SELECT id FROM clients
-		WHERE (%s IS NULL OR name = %s)
-		AND (%s IS NULL OR surname = %s)
-		AND (%s IS NULL OR email = %s)
-		AND (%s IS NULL OR id IN (SELECT client_id FROM phones WHERE phone = %s))
+		WHERE (%(name)s IS NULL OR name = %(name)s)
+		AND (%(surname)s IS NULL OR surname = %(surname)s)
+		AND (%(email)s IS NULL OR email = %(email)s)
+		AND (%(phone)s IS NULL OR id IN (SELECT client_id FROM phones WHERE phone = %(phone)s))
 	"""
-	params = [name, name, surname, surname, email, email, phone, phone]
+	params = {
+		'name': name,
+		'surname': surname,
+		'email': email,
+		'phone': phone
+	}
 	return query, params
 
 
@@ -38,7 +43,8 @@ def find_client(
 ) -> list:
 	"""Finding clients by name, surname, email, and phone number"""
 	validate_client_info(name, surname, email, phone)
-	phone = add_plus_to_phone(phone)
+	if phone:
+		phone = add_plus_to_phone(phone)
 	query, params = build_query(name, surname, email, phone)
 	results = execute_query(conn, query, params)
 	return process_results(results)

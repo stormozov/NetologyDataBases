@@ -35,46 +35,7 @@ def update_client_info(
 	print(f"The client's data with ID {client_id} has been successfully updated!", end='\n\n')
 
 
-def build_update_query(updates: list) -> str:
-	"""
-	Builds the UPDATE query string.
-
-	Args:
-		updates (list): A list of update statements (e.g. ['name = %s', 'surname = %s'])
-
-	Returns:
-		str: The complete UPDATE query string
-	"""
-	return f'UPDATE clients SET {", ".join(updates)} WHERE id = %s'
-
-
-def build_update_params(name: str = None, surname: str = None, email: str = None) -> tuple:
-	"""
-	Builds the update parameters and values.
-
-	Args:
-		name (str, optional): The new name of the client. Defaults to None.
-		surname (str, optional): The new surname of the client. Defaults to None.
-		email (str, optional): The new email of the client. Defaults to None.
-
-	Returns:
-		tuple: A tuple containing the update parameters and values
-	"""
-	fields = {'name': name, 'surname': surname, 'email': email}
-	updates, values = [], []
-
-	for field, value in fields.items():
-		if value is not None:
-			updates.append(f'{field} = %s')
-			values.append(value)
-
-	return updates, values
-
-
-def change_client_info(
-		conn, client_id: int, name: str = None,
-		surname: str = None, email: str = None
-) -> None:
+def change_client_info(conn, client_id: int, name: str = None, surname: str = None, email: str = None) -> None:
 	"""
 	Updates the information of a client in the database.
 
@@ -89,12 +50,20 @@ def change_client_info(
 		None
 	"""
 	with conn.cursor() as cur:
-		updates, values = build_update_params(name, surname, email)
+		if name is not None:
+			cur.execute(
+				'UPDATE clients SET name = %s WHERE id = %s',
+				(name, client_id))
 
-		if updates:
-			query = build_update_query(updates)
-			with conn.cursor() as cur:
-				cur.execute(query, tuple(values + [client_id]))
+		if surname is not None:
+			cur.execute(
+				'UPDATE clients SET surname = %s WHERE id = %s',
+				(surname, client_id))
+
+		if email is not None:
+			cur.execute(
+				'UPDATE clients SET email = %s WHERE id = %s',
+				(email, client_id))
 
 
 def update_client_phones(conn, client_id: int, phones: list[str] | str) -> None:
@@ -127,4 +96,3 @@ def update_client_phones(conn, client_id: int, phones: list[str] | str) -> None:
 			'INSERT INTO phones (client_id, phone) VALUES (%s, %s)',
 			[(client_id, phone) for phone in phones]
 		)
-

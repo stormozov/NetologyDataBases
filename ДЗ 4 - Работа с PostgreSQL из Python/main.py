@@ -35,14 +35,14 @@ if __name__ == '__main__':
 		# del_client(conn, 1)
 
 		# |— Updating client info
-		# update_client_info(conn, 1, surname='Petersen', email='petersen@ex.com')
+		# update_client_info(conn, 33, name='Rayan', email='rayan@ex.com')
 
 		# |— Finding clients id in the database
-		# find_client(conn, name='John')
+		# find_client(conn, name='James')
 
 		# |— Showing client phone
 		# show_client_phone(conn, 1)
 
 		# Checking results from queries above in the terminal
-		# show_all_tables(conn)
+		show_all_tables(conn)
 

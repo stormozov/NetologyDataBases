@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, CheckConstraint
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, CheckConstraint, Float
+from sqlalchemy.orm import relationship, DeclarativeBase
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base class for all database models."""
+    pass
 
 
 class Publisher(Base):
@@ -12,10 +14,10 @@ class Publisher(Base):
     name = Column(String(255), unique=True, nullable=False)
 
     def __str__(self):
-        return f"Publisher: {self.name}"
+        return f'Publisher: {self.name}'
 
     def __repr__(self):
-        return f"Publisher(id={self.id}, name='{self.name}')"
+        return f'Publisher(id={self.id}, name="{self.name}")'
 
 
 class Book(Base):
@@ -27,10 +29,10 @@ class Book(Base):
     publisher = relationship(Publisher)
 
     def __str__(self):
-        return f"Book: {self.title} (Publisher: {self.publisher.name})"
+        return f'Book: {self.title} (Publisher: {self.publisher.name})'
 
     def __repr__(self):
-        return f"Book(id={self.id}, title='{self.title}', publisher_id={self.id_publisher})"
+        return f'Book(id={self.id}, title="{self.title}", publisher_id={self.id_publisher})'
 
 
 class Shop(Base):
@@ -40,10 +42,10 @@ class Shop(Base):
     name = Column(String(255), unique=True, nullable=False)
 
     def __str__(self):
-        return f"Shop: {self.name}"
+        return f'Shop: {self.name}'
 
     def __repr__(self):
-        return f"Shop(id={self.id}, name='{self.name}')"
+        return f'Shop(id={self.id}, name="{self.name}")'
 
 
 class Stock(Base):
@@ -61,17 +63,17 @@ class Stock(Base):
     )
 
     def __str__(self):
-        return f"Stock: {self.book.title} in {self.shop.name} (count: {self.count})"
+        return f'Stock: {self.book.title} in {self.shop.name} (count: {self.count})'
 
     def __repr__(self):
-        return f"Stock(id={self.id}, book_id={self.id_book}, shop_id={self.id_shop}, count={self.count})"
+        return f'Stock(id={self.id}, book_id={self.id_book}, shop_id={self.id_shop}, count={self.count})'
 
 
 class Sale(Base):
     """Represents a sale of a book."""
     __tablename__ = 'sale'
     id = Column(Integer, primary_key=True)
-    price = Column(Integer)
+    price = Column(Float)
     date_sale = Column(DateTime)
     count = Column(Integer, nullable=False)
     id_stock = Column(Integer, ForeignKey('stock.id'))
@@ -82,8 +84,8 @@ class Sale(Base):
     )
 
     def __str__(self):
-        return f"Sale: {self.stock.book.title} on {self.date_sale} (price: {self.price})"
+        return f'Sale: {self.stock.book.title} on {self.date_sale} (price: {self.price})'
 
     def __repr__(self):
-        return f"Sale(id={self.id}, stock_id={self.id_stock}, price={self.price}, date_sale='{self.date_sale}')"
+        return f'Sale(id={self.id}, stock_id={self.id_stock}, price={self.price}, date_sale="{self.date_sale}")'
 
